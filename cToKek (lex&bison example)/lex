@@ -1,0 +1,57 @@
+%{
+    #include <stdio.h>
+    #include <string.h>
+    #include "bison.tab.h"
+
+    // currently there aren't chars and strings
+    // * / ~ ^ && || > >= < <= == != ++ -- += -= *= /=
+    // and so on
+
+%}
+
+identifier [_a-zA-Z][_a-zA-Z0-9]*
+intValue [0-9]+
+doubleValue [0-9]+\.[0-9]+
+
+%%
+\n\r|\r\n|\n|\r { } /* just skip empty line */
+"#" { } /* just skip comments */
+[ \t]+ { } /* just skip whitespaces */
+
+"if" { yylval = strdup(yytext); return IF; }
+"else" { yylval = strdup(yytext); return ELSE; }
+"switch" { yylval = strdup(yytext); return SWITCH; }
+"case" { yylval = strdup(yytext); return CASE; }
+"for" { yylval = strdup(yytext);return FOR; }
+"while" { yylval = strdup(yytext); return WHILE; }
+"do" { yylval = strdup(yytext); return DO; }
+"break" { yylval = strdup(yytext); return BREAK; }
+"continue" { yylval = strdup(yytext); return CONTINUE; }
+"return" { yylval = strdup(yytext); return RETURN; }
+"class" { yylval = strdup(yytext); return CLASS; }
+"public" { yylval = strdup(yytext); return PUBLIC; }
+"private" { yylval = strdup(yytext); return PRIVATE; }
+
+"void" { yylval = strdup(yytext); return VOID; }
+"int" { yylval = strdup(yytext); return INT; }
+"double" { yylval = strdup(yytext);return DOUBLE; }
+
+{intValue} { yylval = strdup(yytext); return INTVALUE; }
+{identifier} { yylval = strdup(yytext); return IDENTIFIER; }
+{doubleValue} { yylval = strdup(yytext); return DOUBLEVALUE; }
+
+";" { yylval = strdup(yytext); return SEMICOLON; }
+":" { yylval = strdup(yytext); return COLON; }
+"." { yylval = strdup(yytext); return DOT; }
+"," { yylval = strdup(yytext); return COMMA; }
+"(" { yylval = strdup(yytext); return LBRACKET; }
+")" { yylval = strdup(yytext); return RBRACKET; }
+"{" { yylval = strdup(yytext); return LBRACE; }
+"}" { yylval = strdup(yytext); return RBRACE; }
+
+"=" { yylval = strdup(yytext); return ASSIGN; }
+"+" { yylval = strdup(yytext); return PLUS; }
+"-" { yylval = strdup(yytext); return MINUS; }
+
+. { yylval = strdup(yytext); return OTHER; }
+%%

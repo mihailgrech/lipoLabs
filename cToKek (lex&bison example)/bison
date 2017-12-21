@@ -1,0 +1,62 @@
+%{
+#include <stdio.h>
+#include <string.h>
+ 
+void yyerror(const char *str)
+{
+        printf("ошибка: %s\n", str);
+}
+ 
+int yywrap()
+{
+        return 1;
+} 
+  
+int main()
+{
+        yyparse();
+} 
+
+%}
+
+%token IF ELSE SWITCH CASE FOR WHILE DO BREAK CONTINUE RETURN CLASS PUBLIC PRIVATE IDENTIFIER DOUBLEVALUE INTVALUE VOID INT DOUBLE COLON SEMICOLON DOT COMMA LBRACKET RBRACKET LBRACE RBRACE ASSIGN PLUS MINUS OTHER
+
+%%
+
+tokens: /* empty */ | tokens statement;
+        
+statement: 
+      varDefenition SEMICOLON
+    | assignment SEMICOLON
+    | ifStmt    
+    | forStmt    
+    
+ifStmt:
+    IF LBRACKET expression RBRACKET LBRACE tokens RBRACE {    printf("if without else"); }
+    IF LBRACKET expression RBRACKET LBRACE tokens RBRACE ELSE LBRACE tokens RBRACE { printf("if with else"); }
+    
+forStmt:FOR LBRACKET IDENTIFIER SEMICOLON expression SEMICOLON assignment RBRACKET LBRACE tokens RBRACE { printf("for loop detected\n"); }
+
+/* a = 10+12 */
+assignment:
+    IDENTIFIER ASSIGN expression { printf("Value %s assigned to variable named %s\n", $1, $3); }
+
+/* int a = 10+12 or int a */
+varDefenition:
+      types IDENTIFIER ASSIGN expression { printf("Variable with type %s named %s assigned %s is defined\n", $1, $2, $4); }
+    | types IDENTIFIER { printf("Varialbe with type %s named %s is declarated", $1, $2); }
+
+/* a, 12, a+b, no brackets supported */
+expression:
+      IDENTIFIER {}
+    | values {  } 
+    | expression binaryOperator expression
+
+/* types of variables */
+types: INT | DOUBLE
+
+/* values of varialbes */
+values: INTVALUE | DOUBLEVALUE
+
+/* binary operators */
+binaryOperator: PLUS | MINUS
